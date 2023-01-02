@@ -12,6 +12,8 @@ body {
     width: 80vw;
     height: 50vh;
     font-size: 1em;
+    grid-column-gap: 3px;
+    grid-row-gap: 3px;
 }
 
 #display {
