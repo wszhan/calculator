@@ -1,0 +1,46 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+#calculator {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 80vw;
+    height: 50vh;
+    font-size: 1em;
+}
+
+#display {
+    grid-column-start: 1;
+    grid-column-end: 5;
+    text-align: right;
+}
+
+#zero {
+    grid-column-end: 3;
+    grid-column-start: 1;
+}
+
+.control {
+    background-color: grey;
+}
+
+.operation {
+    background-color: orange;
+}
+
+.number {
+    background-color: beige;
+}
+
+.display {
+    background-color: blanchedalmond;
+}
+
+.button:hover {
+    background-color: yellowgreen;
+}
