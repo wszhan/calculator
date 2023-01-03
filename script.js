@@ -114,7 +114,7 @@ function convertToPercentage(str) {
         decimalPart = '00' + str.substring(decimalIndex + 1);
     }
 
-    console.log(sign, integralPart, SYMBOL_DECIMAL, decimalPart);
+    // console.log(sign, integralPart, SYMBOL_DECIMAL, decimalPart);
     return sign + integralPart + SYMBOL_DECIMAL + decimalPart;
 }
 
@@ -229,7 +229,7 @@ buttonsOperation.forEach(buttonOperation => {
 
 window.addEventListener('keydown', e => {
     const key = e.key, code = e.code;
-    console.log(key, code);
+    // console.log(key, code);
     // console.log(OPERATION_KEYS);
     // console.log(NUMBER_KEYS);
     // console.log(OPERATION_KEYS.includes(key), NUMBER_KEYS.includes(key));

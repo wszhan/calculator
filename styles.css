@@ -3,27 +3,64 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    /* text-align: center; */
+    background-color:lightslategray;
+}
+
+#calculator-with-instructions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+}
+
+h3 {
     text-align: center;
 }
 
+#notes {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color:saddlebrown;
+    /* text-align: left; */
+    max-width: 400px;
+}
+
 #calculator {
+    font-family: 'Courier New', Courier, monospace;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    width: 80vw;
-    height: 50vh;
+    width: 500px;
+    height: 600px;
     font-size: 1em;
     grid-column-gap: 3px;
     grid-row-gap: 3px;
+    min-height: 400px;
+    min-width: 250px;
+    /* min-width: 250px;
+    max-width: 400px;
+    max-height: 600px; */
 }
 
 #display {
     grid-column-start: 1;
     grid-column-end: 5;
     text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-end;
+    max-height: 1fr;
 }
 
 #expression, #result {
     min-height: 36px;
+}
+
+#expression {
+    font-size: 30px;
+}
+#result {
+    font-size: 80px;
 }
 
 #zero {
@@ -45,6 +82,12 @@ body {
 
 .display {
     background-color: blanchedalmond;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .button:hover {
