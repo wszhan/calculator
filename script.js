@@ -22,10 +22,32 @@ const SYMBOL_ADD = '+',
 const DISPLAY_LENGTH_MAX = 9;
 const ERROR_MSG = "ERROR", INITIAL_DISPLAY_VALUE = '0';
 
+const ESC_KEY = 'Escape', 
+    ENTER_KEY = 'Enter';
+const NUMBER_KEYS = [];
+const TRANSFORMATION_KEYS = [
+    SYMBOL_PERCENTAGE
+];
+const OPERATION_KEYS = [
+    SYMBOL_ADD,
+    SYMBOL_DIVIDE,
+    SYMBOL_EQUAL,
+    SYMBOL_MULTIPLY,
+    SYMBOL_SUBTRACT
+];
+
 /* Functions */
 
 function init() {
     updateDisplay();
+    initNumberKeys();
+}
+
+function initNumberKeys() {
+    // const prefix = 'Digit';
+    for (let i = 0; i <= 9; i++) {
+        NUMBER_KEYS.push(i.toString());
+    }
 }
 
 function updateExpression(exprStr = null) {
@@ -38,6 +60,7 @@ function updateExpression(exprStr = null) {
         + (currentOperation ? currentOperation : '')
         + (ops.length > 1 ? ' ' + parseFloat(ops[ops.length - 1]) : '')
 }
+
 function updateResult(resultValue = INITIAL_DISPLAY_VALUE) {
     updateExpression('');
     result.textContent = resultValue;
@@ -76,19 +99,23 @@ function convertToPercentage(str) {
         return; // number string too long; do nothing
     }
 
-    const decimalPrefix = '0.0';
+    let sign = '', integralPart = '0';
 
-    if (str[0] === '-') { // negative
-        return '-0.' + str.substring(1);
+    if (str[0] === '-') { // negative and no decimal
+        sign = '-';
+        str = str.substring(1); // strip negative sign
     }
+    let decimalPart = str;
 
+    // already a decimal
     if (str.includes(SYMBOL_DECIMAL)) {
         const decimalIndex = str.indexOf(SYMBOL_DECIMAL);
-        const decimalPart = str.substring(decimalIndex + 1);
-        return decimalPrefix + decimalPart;
+        integralPart = str.substring(0, decimalIndex);
+        decimalPart = '00' + str.substring(decimalIndex + 1);
     }
 
-    return decimalPrefix + parseFloat(str);
+    console.log(sign, integralPart, SYMBOL_DECIMAL, decimalPart);
+    return sign + integralPart + SYMBOL_DECIMAL + decimalPart;
 }
 
 function performTransformation(transformationSymbol) {
@@ -154,37 +181,85 @@ buttonsTransformation.forEach(btn => btn.addEventListener('click', e => {
 }));
 
 buttonClear.addEventListener('click', e => {
-    ops = [0];
-    updateDisplay();
+    clearAll();
 });
 
-buttonsNumber.forEach(buttonNumber => {
-    buttonNumber.addEventListener('click', e => {
+function clearAll() {
+    ops = [0];
+    updateDisplay();
+}
+
+function performNumberEvent(operandKeyCode) {
         if (ops.length === 0) ops.push('0');
         let curr = ops[ops.length - 1];
         if (ops[ops.length - 1].length >= DISPLAY_LENGTH_MAX) return;
-        ops[ops.length - 1] = curr + buttonNumber.textContent;
+        ops[ops.length - 1] = curr + operandKeyCode;
         // updateDisplay();
         updateExpression();
+
+}
+
+buttonsNumber.forEach(buttonNumber => {
+    buttonNumber.addEventListener('click', e => {
+        performNumberEvent(e.target.innerText);
     });
 });
 
+function performOperationEvent(operationKeyCode) {
+    if (operationKeyCode === '=' && ops.length === 1) return;
+    if (currentOperation) {
+        performOperation();
+    }
+    
+    if (operationKeyCode === SYMBOL_EQUAL) {
+        currentOperation = null;
+        return;
+    }
+
+    currentOperation = operationKeyCode;
+    updateExpression();
+    ops.push('0');
+}
+
 buttonsOperation.forEach(buttonOperation => {
     buttonOperation.addEventListener('click', e => {
-        if (e.target.innerText === '=' && ops.length === 1) return;
-        if (currentOperation) {
-            performOperation();
-        }
-        
-        if (buttonOperation.textContent === SYMBOL_EQUAL) {
-            currentOperation = null;
-            return;
-        }
-
-        currentOperation = buttonOperation.textContent;
-        updateExpression();
-        ops.push('0');
+        performOperationEvent(e.target.innerText);
     });
+});
+
+window.addEventListener('keydown', e => {
+    const key = e.key, code = e.code;
+    console.log(key, code);
+    // console.log(OPERATION_KEYS);
+    // console.log(NUMBER_KEYS);
+    // console.log(OPERATION_KEYS.includes(key), NUMBER_KEYS.includes(key));
+    /* special cases */
+    if (key === ENTER_KEY) {
+        performOperationEvent(SYMBOL_EQUAL);
+        return;
+    }
+    if (key === ESC_KEY) {
+        clearAll();
+        return;
+    }
+    if (key === SYMBOL_DECIMAL) {
+        performNumberEvent(key);
+        return;
+    }
+    if (TRANSFORMATION_KEYS.includes(key)) {
+        performTransformation(key);
+        return;
+    }
+    if (OPERATION_KEYS.includes(key)) {
+        // console.log("operATION");
+        performOperationEvent(key);
+        return;
+    } 
+    if (NUMBER_KEYS.includes(key)) {
+        // console.log("operAND");
+        performNumberEvent(key);
+        return;
+    }
 });
 
 /* Execution */
