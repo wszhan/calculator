@@ -22,6 +22,10 @@ body {
     text-align: right;
 }
 
+#expression, #result {
+    min-height: 36px;
+}
+
 #zero {
     grid-column-end: 3;
     grid-column-start: 1;

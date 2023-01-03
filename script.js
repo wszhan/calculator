@@ -1,12 +1,16 @@
 const calculator = document.querySelector('#calculator');
 const display = document.querySelector('#display');
+
+const expression = display.querySelector('#expression');
+const result = display.querySelector('#result');
+
 const buttonClear = document.querySelector('#clear'); 
 const buttonsNumber = document.querySelectorAll('.number');
 const buttonsOperation = document.querySelectorAll('.operation');
 const buttonsTransformation = document.querySelectorAll('.transformation');
 
 let currentOperation = null; // + - * /
-let ops = ["0"];
+let ops = [];
 const SYMBOL_ADD = '+',
     SYMBOL_SUBTRACT = '-',
     SYMBOL_MULTIPLY = '*',
@@ -16,7 +20,7 @@ const SYMBOL_ADD = '+',
     SYMBOL_PERCENTAGE = '%',
     SYMBOL_DECIMAL = '.';
 const DISPLAY_LENGTH_MAX = 9;
-const ERROR_MSG = "ERROR";
+const ERROR_MSG = "ERROR", INITIAL_DISPLAY_VALUE = '0';
 
 /* Functions */
 
@@ -24,13 +28,32 @@ function init() {
     updateDisplay();
 }
 
+function updateExpression(exprStr = null) {
+    if (exprStr !== null) {
+        expression.textContent = exprStr;
+        return;
+    }
+
+    expression.textContent = parseFloat(ops[0]) + ' ' 
+        + (currentOperation ? currentOperation : '')
+        + (ops.length > 1 ? ' ' + parseFloat(ops[ops.length - 1]) : '')
+}
+function updateResult(resultValue = INITIAL_DISPLAY_VALUE) {
+    updateExpression('');
+    result.textContent = resultValue;
+    currentOperation = null;
+}
+
 function updateDisplay() {
+    if (ops.length === 0) {
+        updateResult(); return;
+    }
     const lastOp = ops[ops.length - 1];
-    // console.log(typeof lastOp, lastOp);
     const val = parseFloat(lastOp);
     const valStr = val.toString();
     ops[ops.length - 1] = valStr; // update data
-    display.textContent = valStr; // update DOM/display
+    // display.textContent = valStr; // update DOM/display
+    updateResult(valStr); // update DOM/display
 }
 
 function add(a, b) { return a + b; }
@@ -65,7 +88,7 @@ function convertToPercentage(str) {
         return decimalPrefix + decimalPart;
     }
 
-    return decimalPrefix + str; 
+    return decimalPrefix + parseFloat(str);
 }
 
 function performTransformation(transformationSymbol) {
@@ -85,7 +108,8 @@ function performTransformation(transformationSymbol) {
     
     ops[ops.length - 1] = res;
 
-    updateDisplay();
+    // updateDisplay();
+    updateExpression(); // affect the last operand only
 }
 
 function performOperation() {
@@ -136,13 +160,14 @@ buttonClear.addEventListener('click', e => {
 
 buttonsNumber.forEach(buttonNumber => {
     buttonNumber.addEventListener('click', e => {
+        if (ops.length === 0) ops.push('0');
         let curr = ops[ops.length - 1];
         if (ops[ops.length - 1].length >= DISPLAY_LENGTH_MAX) return;
         ops[ops.length - 1] = curr + buttonNumber.textContent;
-        updateDisplay();
+        // updateDisplay();
+        updateExpression();
     });
 });
-
 
 buttonsOperation.forEach(buttonOperation => {
     buttonOperation.addEventListener('click', e => {
@@ -157,7 +182,8 @@ buttonsOperation.forEach(buttonOperation => {
         }
 
         currentOperation = buttonOperation.textContent;
-        ops.push("0");
+        updateExpression();
+        ops.push('0');
     });
 });
 
